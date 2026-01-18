@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Book_Adda.com</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; background: #0a0a0a; color: #eee;
+  }
+  a, button { cursor: pointer; }
+  header {
+    background: #050505; color: #ff00bf; padding: 18px 30px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 0 30px #ff00bfaa; font-weight: 700; letter-spacing: 2px; font-size: 1.6rem;
+  }
+  nav a {
+    color: #00e5c6; text-decoration: none; margin-left: 25px; font-weight: 600;
+    padding: 6px 12px; border-radius: 6px; transition: background-color 0.3s ease;
+    text-transform: uppercase; font-size: 0.9rem; box-shadow: 0 0 8px #00e5c677;
+  }
+  nav a:hover, nav a.active {
+    background-color: #00e5c6; color: #0a0a0a;
+    box-shadow: 0 0 16px #00e5c6cc, 0 0 24px #00b3a699;
+  }
+  main {
+    max-width: 1100px; margin: 30px auto; padding: 0 25px 60px;
+  }
+  section { display: none; }
+  section.active { display: block; }
+  h2 {
+    color: #ff00bf; font-weight: 700; text-align: center;
+    margin-bottom: 30px; text-shadow: 0 0 10px #ff00bfbb;
+  }
+  .products {
+    display: grid; grid-template-columns: repeat(auto-fill,minmax(210px,1fr)); gap: 25px;
+  }
+  .product {
+    position: relative; background: #111; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 0 15px #ff00bf88; display: flex; flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .product:hover {
+    transform: translateY(-12px); box-shadow: 0 0 30px #ff00bfcc;
+  }
+  .product img {
+    width: 100%; height: 180px; object-fit: cover;
+    border-bottom: 1px solid #670059; filter: brightness(0.85);
+  }
+  .product-info {
+    padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;
+    z-index: 1;
+  }
+  .product-info h3 {
+    margin: 0 0 10px; color: #ff00bf; font-size: 1.15rem; text-shadow: 0 0 6px #cc008fbb;
+  }
+  .product-info p {
+    margin: 0 0 15px; color: #ff99cacc; font-weight: 600; font-size: 1.05rem;
+  }
+  .product-info button {
+    background: #00e5c6; color: #0a0a0a; border: none; padding: 12px 0;
+    border-radius: 8px; font-weight: 700; font-size: 1rem;
+    box-shadow: 0 0 20px #00e5c6dd; margin-bottom: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .product-info button:hover {
+    background-color: #00b39f; color: white; box-shadow: 0 0 30px #00b38fcc;
+  }
+  .add-to-wishlist {
+    background: #ff00bf; box-shadow: 0 0 18px #ff0099aa;
+  }
+  .add-to-wishlist:hover {
+    background: #cc008f; box-shadow: 0 0 28px #ff33a9cc; color: white;
+  }
+  .list-item {
+    background: #111; margin-bottom: 16px; padding: 18px 20px; border-radius: 12px;
+    box-shadow: 0 0 15px #00e5c677; display: flex; justify-content: space-between; align-items: center;
+  }
+  .list-item-details h4 {
+    margin: 0 0 6px; font-size: 1.1rem; font-weight: 700; color: #00e5c6;
+    text-shadow: 0 0 5px #009f94bb;
+  }
+  .list-item-details p {
+    margin: 0; font-size: 0.95rem; color: #66fffccc;
+  }
+  .list-item button {
+    background: #ff00bf; padding: 8px 16px; font-size: 0.9rem; font-weight: 700;
+    border: none; border-radius: 8px; box-shadow: 0 0 22px #ff33a9cc; color: white;
+    transition: background-color 0.3s ease;
+  }
+  .list-item button:hover {
+    background: #cc008f; box-shadow: 0 0 30px #ff0099cc;
+  }
+  form {
+    max-width: 480px; margin: 0 auto; background: #111; padding: 30px;
+    border-radius: 15px; box-shadow: 0 0 28px #00e5c688;
+  }
+  label {
+    display: block; margin-bottom: 8px; font-weight: 700; color: #00d8bf;
+    text-shadow: 0 0 6px #009f94bb;
+  }
+  input, textarea {
+    width: 100%; padding: 12px; margin-bottom: 18px;
+    border: 1px solid #00e5c688; border-radius: 10px; background: #0a0a0a;
+    color: #eee; font-size: 1rem; box-shadow: inset 0 0 12px #005e574a;
+  }
+  textarea { resize: vertical; min-height: 100px; }
+  form button {
+    width: 100%; background: #00e5c6; color: #0a0a0a; border: none;
+    padding: 15px 0; font-weight: 700; font-size: 1.1rem; border-radius: 12px;
+    box-shadow: 0 0 25px #00b38fdd;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  form button:hover {
+    background: #009f94; color: white; box-shadow: 0 0 40px #00dfffcf;
+  }
+  .payment-info {
+    max-width: 480px; margin: 0 auto; background: #111; padding: 30px;
+    border-radius: 15px; box-shadow: 0 0 28px #00e5c688;
+  }
+  .payment-info p {
+    font-weight: 700; font-size: 1.1rem; color: #00d8bf; margin-bottom: 20px;
+    text-shadow: 0 0 8px #00a299bb;
+  }
+  .payment-info label { color: #00d8bf; }
+  .payment-info input {
+    background: #0a0a0a; border: 1px solid #00e5c688; color: #eee;
+    padding: 12px; font-size: 1rem; width: 100%; margin-bottom: 18px;
+    border-radius: 10px; box-shadow: inset 0 0 12px #005e574a;
+  }
+  .payment-info button {
+    background: #00e5c6; color: #0a0a0a; border: none; padding: 15px 0;
+    font-weight: 700; font-size: 1.1rem; border-radius: 12px;
+    box-shadow: 0 0 25px #00b38fdd; transition: background-color 0.3s ease, color 0.3s ease;
+    width: 100%;
+  }
+  .payment-info button:hover {
+    background: #009f94; color: white; box-shadow: 0 0 40px #00dfffcf;
+  }
+  #wishlist-items::-webkit-scrollbar, #cart-items::-webkit-scrollbar, #order-items::-webkit-scrollbar {
+    width: 8px;
+  }
+  #wishlist-items::-webkit-scrollbar-thumb, #cart-items::-webkit-scrollbar-thumb, #order-items::-webkit-scrollbar-thumb {
+    background-color: #00e5c677; border-radius: 6px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Book_Adda.com</h1>
+  <nav>
+    <a class="nav-link active" data-target="home" onclick="showSection(event)">Home</a>
+    <a class="nav-link" data-target="cart" onclick="showSection(event)">Cart</a>
+    <a class="nav-link" data-target="wishlist" onclick="showSection(event)">Wishlist</a>
+    <a class="nav-link" data-target="orders" onclick="showSection(event)">Orders</a>
+    <a class="nav-link" data-target="contact" onclick="showSection(event)">Contact</a>
+    <a class="nav-link" data-target="payment" onclick="showSection(event)">Payment</a>
+  </nav>
+</header>
+
+<main>
+  <section id="home" class="active">
+    <h2>Our Book_Adda Collection</h2>
+    <div class="products" id="product-list"></div>
+  </section>
+
+  <section id="cart">
+    <h2>Your Cart</h2>
+    <div id="cart-items" style="max-height:400px; overflow-y:auto;"></div>
+    <div style="text-align:center; font-weight:bold; margin-top:20px; font-size:1.2rem;">
+      Total: $<span id="cart-total">0.00</span>
+    </div>
+  </section>
+
+  <section id="wishlist">
+    <h2>Your Wishlist</h2>
+    <div id="wishlist-items" style="max-height:400px; overflow-y:auto;"></div>
+  </section>
+
+  <section id="orders">
+    <h2>Your Orders</h2>
+    <div id="order-items" style="max-height:400px; overflow-y:auto;"></div>
+    <p id="no-orders-msg" style="text-align:center; font-size:1.1rem; color:#00e5c677;">No orders placed yet.</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <form id="contact-form" onsubmit="submitContact(event)">
+      <label for="name">Name</label>
+      <input type="text" id="name" required autofocus autocomplete="name" />
+      <label for="email">Email</label>
+      <input type="email" id="email" required autocomplete="email" />
+      <label for="message">Message</label>
+      <textarea id="message" rows="5" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <section id="payment">
+    <h2>Payment</h2>
+    <div class="payment-info">
+      <p><strong>Cart Total:</strong> $<span id="payment-total">0.00</span></p>
+      <label for="card-number">Card Number</label>
+      <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" />
+      <label for="expiry-date">Expiry Date</label>
+      <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" />
+      <label for="cvv">CVV</label>
+      <input type="password" id="cvv" maxlength="4" autocomplete="cc-csc" />
+      <button onclick="processPayment()">Pay Now</button>
+    </div>
+  </section>
+</main>
+
+<script>
+  const products = [
+    {
+      id: 1,
+      name: '1984 by George Orwell',
+      price: 10.99,
+      image: 'https://covers.openlibrary.org/b/id/7222246-L.jpg'
+    },
+    {
+      id: 2,
+      name: 'To Kill a Mockingbird by Harper Lee',
+      price: 14.99,
+      image: 'https://covers.openlibrary.org/b/id/8225261-L.jpg'
+    },
+    {
+      id: 3,
+      name: 'Pride and Prejudice by Jane Austen',
+      price: 8.99,
+      image: 'https://covers.openlibrary.org/b/id/8091016-L.jpg'
+    },
+    {
+      id: 4,
+      name: 'The Great Gatsby by F. Scott Fitzgerald',
+      price: 12.49,
+      image: 'https://covers.openlibrary.org/b/id/7352161-L.jpg'
+    }
+  ];
+
+  let cart = [];
+  let wishlist = [];
+  let orders = [];
+
+  function showSection(event) {
+    const target = event.target.getAttribute('data-target');
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+    if (target === 'cart') updateCart();
+    if (target === 'wishlist') updateWishlist();
+    if (target === 'orders') updateOrders();
+    if (target === 'payment') updatePayment();
+  }
+
+  function displayProducts() {
+    const productList = document.getElementById('product-list');
+    productList.innerHTML = '';
+    products.forEach(product => {
+      const div = document.createElement('div');
+      div.className = 'product';
+      div.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <div class="product-info">
+          <h3>${product.name}</h3>
+          <p>Price: $${product.price.toFixed(2)}</p>
+          <button onclick="addToCart(${product.id})">Add to Cart</button>
+          <button class="add-to-wishlist" onclick="addToWishlist(${product.id})">Add to Wishlist</button>
+        </div>
+      `;
+      productList.appendChild(div);
+    });
+  }
+
+  function addToCart(id) {
+    const product = products.find(p => p.id === id);
+    const item = cart.find(c => c.id === id);
+    if (item) item.quantity++;
+    else cart.push({...product, quantity:1});
+    alert(`${product.name} added to cart`);
+    updateCart();
+  }
+
+  function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    updateCart();
+  }
+
+  function updateCart() {
+    const cartItems = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    cartItems.innerHTML = '';
+    let total = 0;
+    cart.forEach(item => {
+      total += item.price * item.quantity;
+      const div = document.createElement('div');
+      div.className = 'list-item';
+      div.innerHTML = `
+        <div class="list-item-details">
+          <h4>${item.name}</h4>
+          <p>Qty: ${item.quantity}</p>
+          <p>Subtotal: $${(item.price * item.quantity).toFixed(2)}</p>
+        </div>
+        <button onclick="removeFromCart(${item.id})">Remove</button>
+      `;
+      cartItems.appendChild(div);
+    });
+    cartTotal.textContent = total.toFixed(2);
+  }
+
+  function addToWishlist(id) {
+    if (wishlist.find(w => w.id === id)) {
+      alert('Already in wishlist');
+      return;
+    }
+    const product = products.find(p => p.id === id);
+    wishlist.push(product);
+    alert(`${product.name} added to wishlist`);
+    updateWishlist();
+  }
+
+  function removeFromWishlist(id) {
+    wishlist = wishlist.filter(item => item.id !== id);
+    updateWishlist();
+  }
+
+  function updateWishlist() {
+    const wishlistItems = document.getElementById('wishlist-items');
+    wishlistItems.innerHTML = '';
+    if (wishlist.length === 0) {
+      wishlistItems.innerHTML = '<p style="color:#00e5c677; text-align:center;">Your wishlist is empty.</p>';
+      return;
+    }
+    wishlist.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'list-item';
+      div.innerHTML = `
+        <div class="list-item-details">
+          <h4>${item.name}</h4>
+          <p>Price: $${item.price.toFixed(2)}</p>
+        </div>
+        <button onclick="removeFromWishlist(${item.id})">Remove</button>
+      `;
+      wishlistItems.appendChild(div);
+    });
+  }
+
+  function placeOrder() {
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+    orders.push([...cart]);
+    cart = [];
+    updateCart();
+    updateOrders();
+    alert('Order placed successfully!');
+  }
+
+  function updateOrders() {
+    const orderItems = document.getElementById('order-items');
+    const noOrdersMsg = document.getElementById('no-orders-msg');
+    orderItems.innerHTML = '';
+    if (orders.length === 0) {
+      noOrdersMsg.style.display = 'block';
+      return;
+    }
+    noOrdersMsg.style.display = 'none';
+    orders.forEach((order, index) => {
+      const div = document.createElement('div');
+      div.style = 'background:#111; margin-bottom:20px; padding:15px; border-radius:12px; box-shadow:0 0 15px #00e5c688; color:#00bfa6;';
+      div.innerHTML = `<h3>Order ${index + 1}</h3>`;
+      order.forEach(item => {
+        div.innerHTML += `<p>${item.name} - Qty: ${item.quantity} - $${(item.price * item.quantity).toFixed(2)}</p>`;
+      });
+      orderItems.appendChild(div);
+    });
+  }
+
+  function submitContact(e) {
+    e.preventDefault();
+    alert('Thank you for contacting us. We will get back to you shortly.');
+    e.target.reset();
+  }
+
+  function updatePayment() {
+    const paymentTotal = document.getElementById('payment-total');
+    let total = 0;
+    cart.forEach(item => total += item.price * item.quantity);
+    paymentTotal.textContent = total.toFixed(2);
+  }
+
+  function processPayment() {
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+    const cardNum = document.getElementById('card-number').value.trim();
+    const expiryDate = document.getElementById('expiry-date').value.trim();
+    const cvv = document.getElementById('cvv').value.trim();
+    if (!cardNum || !expiryDate || !cvv) {
+      alert('Please fill in all payment details.');
+      return;
+    }
+    alert('Payment successful! Thank you for your purchase.');
+    placeOrder();
+    document.getElementById('card-number').value = '';
+    document.getElementById('expiry-date').value = '';
+    document.getElementById('cvv').value = '';
+    showSection({ target: document.querySelector('nav a[data-target="orders"]') });
+  }
+
+  displayProducts();
+  updateCart();
+  updateWishlist();
+  updateOrders();
+</script>
+
+</body>
+</html>
